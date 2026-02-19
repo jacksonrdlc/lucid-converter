@@ -1,0 +1,9 @@
+/* App styles - layout and structure */
+
+/* ── Outer layout: Teams | Arrow | AWS | Arrow | Enterprise Tools ── */
+.outer-layout {
+  display: grid;
+  grid-template-columns: 155px 30px 1fr 30px 192px;
+  gap: 0;
+  align-items: start;
+}

@@ -1,0 +1,74 @@
+/* MSAP component styles */
+.msap-component {
+  border-radius: 7px; 
+  padding: 12px 13px;
+  color: #fff; 
+  border: 1.5px solid transparent;
+}
+
+.mc-header { 
+  display: flex; 
+  align-items: center; 
+  gap: 7px; 
+  margin-bottom: 6px; 
+}
+
+.mc-icon { 
+  font-size: 17px; 
+}
+
+.mc-label {
+  font-size: 9px; 
+  font-weight: 700;
+  text-transform: uppercase; 
+  letter-spacing: 0.6px;
+  font-family: 'IBM Plex Mono', monospace; 
+  opacity: 0.65;
+}
+
+.mc-title { 
+  font-size: 13px; 
+  font-weight: 700; 
+  margin-bottom: 6px; 
+}
+
+.mc-bullets { 
+  list-style: none; 
+}
+
+.mc-bullets li {
+  font-size: 10.5px; 
+  line-height: 1.6;
+  padding-left: 10px; 
+  position: relative; 
+  opacity: 0.88;
+}
+
+.mc-bullets li::before { 
+  content: '·'; 
+  position: absolute; 
+  left: 0; 
+  font-weight: 700; 
+}
+
+.mc-runtime   { background: #1E3A5F; border-color: #0F2040; }
+.mc-ingestion { background: #1B4F8A; border-color: #0E3366; }
+.mc-schemas   { background: #374151; border-color: #1F2937; }
+.mc-hitl      { background: #1D4ED8; border-color: #1E40AF; }
+
+.schema-chips { 
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 5px; 
+  margin-top: 7px; 
+}
+
+.schema-chip {
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 4px; 
+  padding: 2px 7px;
+  font-size: 9.5px; 
+  font-family: 'IBM Plex Mono', monospace; 
+  font-weight: 600;
+}

@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AWS AgentCore – MDLive SDLC MSAP Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #EAEDF2;
+    font-family: 'IBM Plex Sans', sans-serif;
+    padding: 28px 28px 48px;
+    color: #0F1923;
+  }
+
+  .pg-header { max-width: 1700px; margin: 0 auto 18px; display: flex; justify-content: space-between; align-items: flex-end; }
+  .pg-header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.2px; }
+  .pg-header p  { font-size: 11.5px; color: #5A6476; margin-top: 3px; font-family: 'IBM Plex Mono', monospace; }
+  .pg-header-right { font-size: 10.5px; color: #9CA3AF; font-family: 'IBM Plex Mono', monospace; text-align: right; line-height: 1.6; }
+
+  .card {
+    max-width: 1700px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1.5px solid #CDD5E0;
+    border-radius: 14px;
+    padding: 26px;
+    box-shadow: 0 6px 32px rgba(0,0,0,0.06);
+  }
+
+  /* ── Outer layout: Teams | Arrow | AWS | Arrow | Enterprise Tools ── */
+  .outer-layout {
+    display: grid;
+    grid-template-columns: 155px 30px 1fr 30px 192px;
+    gap: 0;
+    align-items: start;
+  }
+
+  /* ── Shared external column styles ── */
+  .external-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding-top: 8px;
+  }
+
+  .ext-label {
+    font-size: 9px; font-weight: 700;
+    color: #9CA3AF; letter-spacing: 1.2px;
+    text-transform: uppercase;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  /* ── Teams card ── */
+  .teams-card {
+    background: #5B21B6;
+    color: #fff;
+    border-radius: 10px;
+    padding: 16px 12px;
+    text-align: center;
+    border: 2px solid #3B0764;
+    width: 148px;
+  }
+  .teams-icon { font-size: 26px; margin-bottom: 6px; }
+  .teams-title { font-size: 13px; font-weight: 700; }
+  .teams-sub { font-size: 10px; opacity: 0.8; margin-top: 4px; line-height: 1.5; }
+  .teams-roles { margin-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+  .teams-role {
+    background: rgba(255,255,255,0.15);
+    border-radius: 4px; padding: 3px 6px;
+    font-size: 9.5px; font-family: 'IBM Plex Mono', monospace; font-weight: 600;
+  }
+
+  /* ── Enterprise tool cards (right column) ── */
+  .ent-tool {
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: #fff;
+    border: 2px solid transparent;
+    margin-bottom: 7px;
+    width: 185px;
+  }
+  .ent-tool:last-child { margin-bottom: 0; }
+  .ent-tool-header { display: flex; align-items: center; gap: 7px; margin-bottom: 3px; }
+  .ent-tool-icon { font-size: 16px; }
+  .ent-tool-name { font-size: 12.5px; font-weight: 700; }
+  .ent-tool-sub  { font-size: 9.5px; opacity: 0.8; line-height: 1.5; }
+  .ent-tool-mcp  {
+    margin-top: 6px;
+    display: inline-block;
+    font-size: 8.5px; font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 3px; padding: 1px 6px;
+    letter-spacing: 0.3px;
+  }
+
+  .et-jira    { background: #0052CC; border-color: #003899; }
+  .et-linear  { background: #5E6AD2; border-color: #4A55B0; }
+  .et-conf    { background: #172B4D; border-color: #0B1F3A; }
+  .et-zephyr  { background: #065F46; border-color: #022C22; }
+
+  /* Also inputs on right */
+  .et-hb      { background: #B91C1C; border-color: #7F1D1D; }
+  .et-figma   { background: #7C3AED; border-color: #4C1D95; }
+  .et-adobe   { background: #9A3412; border-color: #7C2D12; }
+
+  .ent-section-label {
+    font-size: 8.5px; font-weight: 700;
+    color: #9CA3AF; letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: 'IBM Plex Mono', monospace;
+    margin: 12px 0 6px;
+  }
+  .ent-section-label:first-of-type { margin-top: 0; }
+
+  /* ── Bidirectional arrow columns ── */
+  .bi-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 90px;
+    gap: 6px;
+    height: 100%;
+  }
+  .ba-line-down { width: 2px; height: 50px; }
+  .ba-arrowhead-down {
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+  }
+  .ba-arrowhead-up {
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+  }
+  .ba-label {
+    font-size: 8px; font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+    writing-mode: vertical-rl; transform: rotate(180deg);
+    letter-spacing: 0.4px; margin: 2px 0;
+  }
+  .ba-gap { height: 16px; }
+
+  /* ── AWS Cloud ── */
+  .aws-region {
+    position: relative;
+    border: 2px solid #3B82F6;
+    border-radius: 10px;
+    background: #F6F9FF;
+    padding: 28px 20px 20px;
+  }
+  .aws-region-label {
+    position: absolute;
+    top: -13px; left: 16px;
+    background: #fff; padding: 0 8px;
+    font-size: 10px; font-weight: 700;
+    color: #3B82F6; letter-spacing: 1.2px;
+    text-transform: uppercase;
+    font-family: 'IBM Plex Mono', monospace;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .msap-tag {
+    position: absolute;
+    top: -13px; right: 16px;
+    background: #5B21B6; color: #fff;
+    padding: 2px 10px;
+    font-size: 9.5px; font-weight: 700;
+    border-radius: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Inside AWS: Runtime | gap | Gateway strip ── */
+  .aws-inner {
+    display: grid;
+    grid-template-columns: 1fr 170px;
+    gap: 14px;
+    align-items: start;
+  }
+
+  .col-header {
+    font-size: 9.5px; font-weight: 700;
+    color: #9CA3AF; letter-spacing: 1.2px;
+    text-transform: uppercase;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 8px;
+  }
+
+  /* Runtime box */
+  .runtime-box {
+    border: 2.5px dashed #F97316;
+    border-radius: 11px;
+    background: #FFFAF5;
+    padding: 18px 18px 16px;
+  }
+  .runtime-title {
+    font-size: 11px; font-weight: 700;
+    color: #C2410C; letter-spacing: 0.8px;
+    text-transform: uppercase;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 4px;
+  }
+  .runtime-sub {
+    font-size: 9.5px; color: #9A3412; opacity: 0.8;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 16px;
+  }
+
+  /* MSAP 2x2 grid */
+  .msap-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .msap-component {
+    border-radius: 7px; padding: 12px 13px;
+    color: #fff; border: 1.5px solid transparent;
+  }
+  .mc-header { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; }
+  .mc-icon { font-size: 17px; }
+  .mc-label {
+    font-size: 9px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    font-family: 'IBM Plex Mono', monospace; opacity: 0.65;
+  }
+  .mc-title { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .mc-bullets { list-style: none; }
+  .mc-bullets li {
+    font-size: 10.5px; line-height: 1.6;
+    padding-left: 10px; position: relative; opacity: 0.88;
+  }
+  .mc-bullets li::before { content: '·'; position: absolute; left: 0; font-weight: 700; }
+
+  .mc-runtime   { background: #1E3A5F; border-color: #0F2040; }
+  .mc-ingestion { background: #1B4F8A; border-color: #0E3366; }
+  .mc-schemas   { background: #374151; border-color: #1F2937; }
+  .mc-hitl      { background: #1D4ED8; border-color: #1E40AF; }
+
+  .schema-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+  .schema-chip {
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 4px; padding: 2px 7px;
+    font-size: 9.5px; font-family: 'IBM Plex Mono', monospace; font-weight: 600;
+  }
+
+  .bedrock-row { display: flex; gap: 10px; }
+  .bedrock-chip {
+    flex: 1; border-radius: 7px;
+    padding: 10px 12px; color: #fff; border: 1.5px solid transparent;
+  }
+  .bc-title { font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+  .bc-sub   { font-size: 10px; opacity: 0.8; margin-top: 3px; }
+  .bc-bedrock  { background: #065F46; border-color: #022C22; }
+  .bc-cognito  { background: #1E3A5F; border-color: #0F2040; }
+
+  /* ── AgentCore Gateway strip (right inside AWS) ── */
+  .gateway-strip {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .gw-box {
+    border-radius: 8px; padding: 11px 12px;
+    color: #fff; border: 2px solid transparent;
+  }
+  .gw-title { font-size: 12px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+  .gw-sub   { font-size: 9.5px; opacity: 0.8; line-height: 1.5; }
+  .gw-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .gw-chip  {
+    font-size: 9px; font-family: 'IBM Plex Mono', monospace; font-weight: 600;
+    background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 3px; padding: 2px 6px;
+  }
+  .gw-gateway  { background: #1B4F8A; border-color: #0E3366; }
+  .gw-memory   { background: #5B21B6; border-color: #3B0764; }
+
+  /* MCP label within gateway */
+  .mcp-badge {
+    font-size: 8.5px; font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+    background: #F97316; color: #fff;
+    border-radius: 3px; padding: 1px 6px; display: inline-block; margin-bottom: 6px;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Bottom Rail ── */
+  .bottom-rail {
+    margin-top: 16px; padding-top: 16px;
+    border-top: 2px dashed #CBD5E1;
+  }
+  .rail-label {
+    font-size: 10px; font-weight: 700;
+    color: #C2410C; letter-spacing: 0.8px;
+    text-transform: uppercase;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .rail-label::after { content: ''; flex: 1; height: 1px; background: #E2E8F0; }
+
+  .rail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .rail-node {
+    border-radius: 8px; padding: 13px 13px;
+    color: #fff; border: 2px solid transparent;
+  }
+  .rn-icon  { font-size: 18px; margin-bottom: 5px; }
+  .rn-label { font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; font-family: 'IBM Plex Mono', monospace; opacity: 0.65; }
+  .rn-title { font-size: 12.5px; font-weight: 700; margin-top: 2px; line-height: 1.3; }
+  .rn-sub   { font-size: 10px; opacity: 0.8; margin-top: 5px; line-height: 1.55; }
+  .rn-dots  { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+  .rn-dot   {
+    font-size: 9px; font-family: 'IBM Plex Mono', monospace; font-weight: 600;
+    background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.28);
+    border-radius: 3px; padding: 1px 6px;
+  }
+  .rn-s3      { background: #9A3412; border-color: #7C2D12; }
+  .rn-observ  { background: #1E3A5F; border-color: #0F2040; }
+  .rn-policy  { background: #92400E; border-color: #78350F; }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    margin-top: 18px; padding-top: 14px;
+    border-top: 1px solid #E5E7EB;
+  }
+  .li { display: flex; align-items: center; gap: 6px; font-size: 10.5px; color: #5A6476; }
+  .ld { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="pg-header">
+  <div>
+    <h1>AWS AgentCore — MDLive Enterprise SDLC Agent Architecture</h1>
+    <p>Minimal Shared Agent Platform (MSAP) &nbsp;·&nbsp; 4 Pilot Workflows &nbsp;·&nbsp; Human-in-the-Loop with Stage Gate Control</p>
+  </div>
+  <div class="pg-header-right">Phase 1 Pilot &nbsp;·&nbsp; Slalom / MDLive<br/>Amazon Bedrock AgentCore</div>
+</div>
+
+<div class="card">
+  <div class="outer-layout">
+
+    <!-- ══ LEFT: Teams (external) ══ -->
+    <div class="external-col">
+      <div class="ext-label">External</div>
+      <div class="teams-card">
+        <div class="teams-icon">💬</div>
+        <div class="teams-title">Microsoft Teams</div>
+        <div class="teams-sub">HITL Interface</div>
+        <div class="teams-roles">
+          <span class="teams-role">Product Manager</span>
+          <span class="teams-role">QA Engineer</span>
+          <span class="teams-role">Developer</span>
+          <span class="teams-role">Analytics Lead</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ Arrow: Teams ↔ AWS ══ -->
+    <div class="bi-arrow">
+      <!-- down = input -->
+      <div class="ba-line-down" style="background:#7C3AED;"></div>
+      <div class="ba-arrowhead-down" style="border-top:7px solid #7C3AED;"></div>
+      <div class="ba-label" style="color:#7C3AED;">input</div>
+      <div class="ba-gap"></div>
+      <!-- up = response -->
+      <div class="ba-label" style="color:#94A3B8;">response</div>
+      <div class="ba-arrowhead-up" style="border-bottom:7px solid #94A3B8;"></div>
+      <div class="ba-line-down" style="background:#94A3B8;"></div>
+    </div>
+
+    <!-- ══ CENTER: AWS Cloud ══ -->
+    <div class="aws-region">
+      <span class="aws-region-label">
+        <svg width="15" height="15" viewBox="0 0 24 24"><rect width="24" height="24" rx="3" fill="#FF9900"/><text x="12" y="16" text-anchor="middle" font-size="9" font-weight="bold" fill="white" font-family="sans-serif">aws</text></svg>
+        AWS Cloud
+      </span>
+      <span class="msap-tag">MSAP — Minimal Shared Agent Platform</span>
+
+      <div class="aws-inner">
+
+        <!-- AgentCore Runtime -->
+        <div>
+          <div class="col-header">⚙ AgentCore Runtime &amp; MSAP Components</div>
+          <div class="runtime-box">
+            <div class="runtime-title">AgentCore Runtime</div>
+            <div class="runtime-sub">Any Framework: CrewAI · LangGraph · LlamaIndex · Strands</div>
+
+            <div class="msap-grid">
+              <div class="msap-component mc-runtime">
+                <div class="mc-header"><span class="mc-icon">⚙️</span><span class="mc-label">Orchestration</span></div>
+                <div class="mc-title">Runtime &amp; Orchestration</div>
+                <ul class="mc-bullets">
+                  <li>Deterministic step execution</li>
+                  <li>State: Draft → Review → Approved</li>
+                  <li>Pause / resume at HITL gates</li>
+                  <li>Idempotent safe retries</li>
+                  <li>8-hour execution windows</li>
+                  <li>A2A protocol support</li>
+                </ul>
+              </div>
+
+              <div class="msap-component mc-ingestion">
+                <div class="mc-header"><span class="mc-icon">🔌</span><span class="mc-label">Context Layer</span></div>
+                <div class="mc-title">Unified Context Ingestion</div>
+                <ul class="mc-bullets">
+                  <li>Read-only in Phase 1</li>
+                  <li>Source-tagged on every object</li>
+                  <li>Figma screens → captioned text</li>
+                  <li>Jira structured records</li>
+                  <li>Confluence docs + PRDs</li>
+                  <li>HB error payloads + stack traces</li>
+                </ul>
+              </div>
+
+              <div class="msap-component mc-schemas">
+                <div class="mc-header"><span class="mc-icon">🗃️</span><span class="mc-label">Canonical Schemas</span></div>
+                <div class="mc-title">Artifact Schemas</div>
+                <ul class="mc-bullets">
+                  <li>Prevents semantic drift</li>
+                  <li>Confidence + source metadata</li>
+                  <li>Traceability IDs on all artifacts</li>
+                  <li>Required + optional field defs</li>
+                </ul>
+                <div class="schema-chips">
+                  <span class="schema-chip">Requirement</span>
+                  <span class="schema-chip">Story</span>
+                  <span class="schema-chip">Test Case</span>
+                  <span class="schema-chip">Incident</span>
+                </div>
+              </div>
+
+              <div class="msap-component mc-hitl">
+                <div class="mc-header"><span class="mc-icon">👤</span><span class="mc-label">Human Review</span></div>
+                <div class="mc-title">HITL Review Interface</div>
+                <ul class="mc-bullets">
+                  <li>Source ↔ output side-by-side</li>
+                  <li>Approve / Edit / Reject</li>
+                  <li>Mandatory reason on rejection</li>
+                  <li>One interface across all agents</li>
+                  <li>Feedback loops back to agent</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="bedrock-row">
+              <div class="bedrock-chip bc-bedrock">
+                <div class="bc-title">🧠 Amazon Bedrock</div>
+                <div class="bc-sub">Foundation models · Inference · Embeddings · Model routing</div>
+              </div>
+              <div class="bedrock-chip bc-cognito">
+                <div class="bc-title">🔐 AgentCore Identity</div>
+                <div class="bc-sub">Cognito · IAM · OAuth 2.0 · Multi-tenant token vault</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Rail inside AWS -->
+          <div class="bottom-rail">
+            <div class="rail-label">⚡ Shared Platform Infrastructure</div>
+            <div class="rail-grid">
+              <div class="rail-node rn-s3">
+                <div class="rn-icon">🗂️</div>
+                <div class="rn-label">Amazon S3</div>
+                <div class="rn-title">Rule Sets &amp; Artifacts</div>
+                <div class="rn-sub">Config-driven workflow definitions · Shared prompt templates</div>
+                <div class="rn-dots">
+                  <span class="rn-dot">Prompt templates</span>
+                  <span class="rn-dot">Cedar policies</span>
+                  <span class="rn-dot">Draft checkpoints</span>
+                </div>
+              </div>
+              <div class="rail-node rn-observ">
+                <div class="rn-icon">🔭</div>
+                <div class="rn-label">AgentCore Observability</div>
+                <div class="rn-title">Traceability &amp; Ops</div>
+                <div class="rn-sub">"Git blame for requirements" — every artifact traced end-to-end</div>
+                <div class="rn-dots">
+                  <span class="rn-dot">Prompt version</span>
+                  <span class="rn-dot">Model version</span>
+                  <span class="rn-dot">Reviewer ID</span>
+                  <span class="rn-dot">CloudWatch</span>
+                </div>
+              </div>
+              <div class="rail-node rn-policy">
+                <div class="rn-icon">📏</div>
+                <div class="rn-label">Policy + Evaluations</div>
+                <div class="rn-title">Governance</div>
+                <div class="rn-sub">Agents may draft, not decide · Policy-driven not prompt-driven</div>
+                <div class="rn-dots">
+                  <span class="rn-dot">Cedar rules</span>
+                  <span class="rn-dot">No autonomous writes</span>
+                  <span class="rn-dot">13 evaluators</span>
+                  <span class="rn-dot">Kill switch</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- AgentCore Gateway strip -->
+        <div>
+          <div class="col-header">🔀 AgentCore Gateway</div>
+          <div class="gateway-strip">
+
+            <div class="gw-box gw-gateway">
+              <div class="gw-title">🔀 Gateway</div>
+              <div class="gw-sub">Unified MCP hub · Single secure endpoint · IAM + OAuth 2.0</div>
+              <div class="gw-chips">
+                <span class="gw-chip">Tool routing</span>
+                <span class="gw-chip">Browser</span>
+                <span class="gw-chip">Code Interp</span>
+              </div>
+            </div>
+
+            <div class="gw-box gw-memory">
+              <div class="gw-title">🧠 Memory</div>
+              <div class="gw-sub">Solves agent statelessness across sessions</div>
+              <div class="gw-chips">
+                <span class="gw-chip">Short-term</span>
+                <span class="gw-chip">Long-term</span>
+                <span class="gw-chip">Episodic</span>
+                <span class="gw-chip">365d · KMS</span>
+              </div>
+            </div>
+
+            <!-- MCP connectors label -->
+            <div style="margin-top:8px; padding: 10px 12px; background: #FFF5ED; border: 2px dashed #F97316; border-radius: 8px;">
+              <div style="font-size:9px;font-weight:700;color:#C2410C;font-family:'IBM Plex Mono',monospace;letter-spacing:0.5px;margin-bottom:8px;">MCP CONNECTORS</div>
+
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <!-- Input connectors -->
+                <div style="font-size:8.5px;color:#94A3B8;font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:0.5px;">INBOUND ← Enterprise</div>
+
+                <div style="background:#9A3412;border-radius:5px;padding:6px 9px;color:#fff;">
+                  <div style="font-size:10.5px;font-weight:700;">📊 Adobe Analytics</div>
+                  <div style="font-size:9px;opacity:0.8;margin-top:2px;">Event schema · CData MCP</div>
+                </div>
+                <!-- Output connectors -->
+                <div style="font-size:8.5px;color:#94A3B8;font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:0.5px;margin-top:4px;">OUTBOUND → Enterprise</div>
+                <div style="background:#0052CC;border-radius:5px;padding:6px 9px;color:#fff;border:1px solid rgba(255,255,255,0.2);">
+                  <div style="font-size:10.5px;font-weight:700;">Jira · Linear MCP</div>
+                  <div style="font-size:9px;opacity:0.8;margin-top:2px;">Ticket write · draft only</div>
+                </div>
+                <div style="background:#172B4D;border-radius:5px;padding:6px 9px;color:#fff;">
+                  <div style="font-size:10.5px;font-weight:700;">Confluence MCP</div>
+                  <div style="font-size:9px;opacity:0.8;margin-top:2px;">PRD draft · doc write</div>
+                </div>
+                <div style="background:#065F46;border-radius:5px;padding:6px 9px;color:#fff;">
+                  <div style="font-size:10.5px;font-weight:700;">Zephyr MCP</div>
+                  <div style="font-size:9px;opacity:0.8;margin-top:2px;">Test write · human gated</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div><!-- end aws-inner -->
+    </div><!-- end aws-region -->
+
+    <!-- ══ Arrow: AWS ↔ Enterprise Tools ══ -->
+    <div class="bi-arrow">
+      <div class="ba-line-down" style="background:#2563EB;"></div>
+      <div class="ba-arrowhead-down" style="border-top:7px solid #2563EB;"></div>
+      <div class="ba-label" style="color:#2563EB;">write</div>
+      <div class="ba-gap"></div>
+      <div class="ba-label" style="color:#94A3B8;">read</div>
+      <div class="ba-arrowhead-up" style="border-bottom:7px solid #94A3B8;"></div>
+      <div class="ba-line-down" style="background:#94A3B8;"></div>
+    </div>
+
+    <!-- ══ RIGHT: Enterprise Tools (external) ══ -->
+    <div class="external-col">
+      <div class="ext-label">Enterprise Tools</div>
+
+      <div class="ent-tool et-hb">
+        <div class="ent-tool-header">
+          <span class="ent-tool-icon">🔴</span>
+          <span class="ent-tool-name">Honeybadger</span>
+        </div>
+        <div class="ent-tool-sub">Error monitoring · Stack traces · Alerts · Webhooks</div>
+        <span class="ent-tool-mcp">via Honeybadger MCP</span>
+      </div>
+
+      <div class="ent-tool et-figma">
+        <div class="ent-tool-header">
+          <span class="ent-tool-icon">🎨</span>
+          <span class="ent-tool-name">Figma</span>
+        </div>
+        <div class="ent-tool-sub">Design files · Screens · User flows · Annotations</div>
+        <span class="ent-tool-mcp">via Figma MCP</span>
+      </div>
+
+      <div class="ent-tool et-jira">
+        <div class="ent-tool-header">
+          <span class="ent-tool-icon">🟦</span>
+          <span class="ent-tool-name">Jira</span>
+        </div>
+        <div class="ent-tool-sub">Epics · Stories · Subtasks · Sprints · Backlog</div>
+        <span class="ent-tool-mcp">via Jira MCP</span>
+      </div>
+
+      <div class="ent-tool et-linear">
+        <div class="ent-tool-header">
+          <span class="ent-tool-icon">🟪</span>
+          <span class="ent-tool-name">Linear</span>
+        </div>
+        <div class="ent-tool-sub">Alt ticket management · Engineering teams</div>
+        <span class="ent-tool-mcp">via Linear MCP</span>
+      </div>
+
+      <div class="ent-tool et-conf">
+        <div class="ent-tool-header">
+          <span class="ent-tool-icon">📘</span>
+          <span class="ent-tool-name">Confluence</span>
+        </div>
+        <div class="ent-tool-sub">PRD drafts · Error reports · Knowledge base · Specs</div>
+        <span class="ent-tool-mcp">via Confluence MCP</span>
+      </div>
+
+      <div class="ent-tool et-zephyr">
+        <div class="ent-tool-header">
+          <span class="ent-tool-icon">🧪</span>
+          <span class="ent-tool-name">Zephyr</span>
+        </div>
+        <div class="ent-tool-sub">Test plans · Test cases · Automated execution</div>
+        <span class="ent-tool-mcp">via Zephyr MCP</span>
+      </div>
+
+    </div>
+
+  </div><!-- end outer-layout -->
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="li"><div class="ld" style="background:#5B21B6;"></div> External HITL (Teams)</div>
+    <div class="li"><div class="ld" style="background:#1E3A5F;"></div> Runtime &amp; Orchestration</div>
+    <div class="li"><div class="ld" style="background:#1B4F8A;"></div> Context Ingestion</div>
+    <div class="li"><div class="ld" style="background:#374151;"></div> Canonical Schemas</div>
+    <div class="li"><div class="ld" style="background:#1D4ED8;"></div> HITL Review</div>
+    <div class="li"><div class="ld" style="background:#5B21B6;"></div> Memory</div>
+    <div class="li"><div class="ld" style="background:#1B4F8A;"></div> Gateway + MCP Connectors</div>
+    <div class="li"><div class="ld" style="background:#92400E;"></div> Policy + Evaluations</div>
+    <div class="li"><div class="ld" style="background:#0052CC;"></div> Enterprise Tools (external)</div>
+    <div class="li" style="margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#9CA3AF;">Slalom · Cigna / MDLive Discovery · 2025</div>
+  </div>
+
+</div><!-- end card -->
+</body>
+</html>

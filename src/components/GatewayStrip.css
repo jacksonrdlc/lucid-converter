@@ -1,0 +1,110 @@
+/* ── AgentCore Gateway strip (right inside AWS) ── */
+.gateway-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gw-box {
+  border-radius: 8px; 
+  padding: 11px 12px;
+  color: #fff; 
+  border: 2px solid transparent;
+}
+
+.gw-title { 
+  font-size: 12px; 
+  font-weight: 700; 
+  margin-bottom: 4px; 
+  display: flex; 
+  align-items: center; 
+  gap: 6px; 
+}
+
+.gw-sub   { 
+  font-size: 9.5px; 
+  opacity: 0.8; 
+  line-height: 1.5; 
+}
+
+.gw-chips { 
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 4px; 
+  margin-top: 6px; 
+}
+
+.gw-chip  {
+  font-size: 9px; 
+  font-family: 'IBM Plex Mono', monospace; 
+  font-weight: 600;
+  background: rgba(255,255,255,0.18); 
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 3px; 
+  padding: 2px 6px;
+}
+
+.gw-gateway  { 
+  background: #1B4F8A; 
+  border-color: #0E3366; 
+}
+
+.gw-memory   { 
+  background: #5B21B6; 
+  border-color: #3B0764; 
+}
+
+/* MCP Connectors Box */
+.mcp-connectors-box {
+  margin-top: 8px; 
+  padding: 10px 12px; 
+  background: #FFF5ED; 
+  border: 2px dashed #F97316; 
+  border-radius: 8px;
+}
+
+.mcp-connectors-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: #C2410C;
+  font-family: 'IBM Plex Mono', monospace;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.mcp-connectors-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mcp-section-label {
+  font-size: 8.5px;
+  color: #94A3B8;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.mcp-connector-item {
+  border-radius: 5px;
+  padding: 6px 9px;
+  color: #fff;
+}
+
+.mcp-connector-item.adobe {
+  background: #9A3412;
+}
+
+.mcp-connector-item.jira {
+  background: #0052CC;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.mcp-connector-item.confluence {
+  background: #172B4D;
+}
+
+.mcp-connector-item.zephyr {
+  background: #065F46;
+}

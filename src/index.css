@@ -1,0 +1,147 @@
+*, *::before, *::after { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+}
+
+body {
+  background: #EAEDF2;
+  font-family: 'IBM Plex Sans', sans-serif;
+  padding: 28px 28px 48px;
+  color: #0F1923;
+}
+
+.pg-header { 
+  max-width: 1700px; 
+  margin: 0 auto 18px; 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: flex-end; 
+}
+
+.pg-header h1 { 
+  font-size: 18px; 
+  font-weight: 700; 
+  letter-spacing: -0.2px; 
+}
+
+.pg-header p { 
+  font-size: 11.5px; 
+  color: #5A6476; 
+  margin-top: 3px; 
+  font-family: 'IBM Plex Mono', monospace; 
+}
+
+.pg-header-right { 
+  font-size: 10.5px; 
+  color: #9CA3AF; 
+  font-family: 'IBM Plex Mono', monospace; 
+  text-align: right; 
+  line-height: 1.6; 
+}
+
+.card {
+  max-width: 1700px;
+  margin: 0 auto;
+  background: #fff;
+  border: 1.5px solid #CDD5E0;
+  border-radius: 14px;
+  padding: 26px;
+  box-shadow: 0 6px 32px rgba(0,0,0,0.06);
+}
+
+/* ── Outer layout: Teams | Arrow | AWS | Arrow | Enterprise Tools ── */
+.outer-layout {
+  display: grid;
+  grid-template-columns: 155px 30px 1fr 30px 192px;
+  gap: 0;
+  align-items: start;
+}
+
+/* ── Shared external column styles ── */
+.external-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-top: 8px;
+}
+
+.ext-label {
+  font-size: 9px; 
+  font-weight: 700;
+  color: #9CA3AF; 
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  font-family: 'IBM Plex Mono', monospace;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+/* ── Bidirectional arrow columns ── */
+.bi-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 90px;
+  gap: 6px;
+  height: 100%;
+}
+
+.ba-line-down { 
+  width: 2px; 
+  height: 50px; 
+}
+
+.ba-arrowhead-down {
+  width: 0; 
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+
+.ba-arrowhead-up {
+  width: 0; 
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+
+.ba-label {
+  font-size: 8px; 
+  font-family: 'IBM Plex Mono', monospace; 
+  font-weight: 700;
+  writing-mode: vertical-rl; 
+  transform: rotate(180deg);
+  letter-spacing: 0.4px; 
+  margin: 2px 0;
+}
+
+.ba-gap { 
+  height: 16px; 
+}
+
+/* ── Legend ── */
+.legend {
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 12px;
+  margin-top: 18px; 
+  padding-top: 14px;
+  border-top: 1px solid #E5E7EB;
+}
+
+.li { 
+  display: flex; 
+  align-items: center; 
+  gap: 6px; 
+  font-size: 10.5px; 
+  color: #5A6476; 
+}
+
+.ld { 
+  width: 10px; 
+  height: 10px; 
+  border-radius: 3px; 
+  flex-shrink: 0; 
+}

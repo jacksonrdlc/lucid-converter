@@ -1,0 +1,36 @@
+.bedrock-row { 
+  display: flex; 
+  gap: 10px; 
+}
+
+.bedrock-chip {
+  flex: 1; 
+  border-radius: 7px;
+  padding: 10px 12px; 
+  color: #fff; 
+  border: 1.5px solid transparent;
+}
+
+.bc-title { 
+  font-size: 12px; 
+  font-weight: 700; 
+  display: flex; 
+  align-items: center; 
+  gap: 6px; 
+}
+
+.bc-sub   { 
+  font-size: 10px; 
+  opacity: 0.8; 
+  margin-top: 3px; 
+}
+
+.bc-bedrock  { 
+  background: #065F46; 
+  border-color: #022C22; 
+}
+
+.bc-cognito  { 
+  background: #1E3A5F; 
+  border-color: #0F2040; 
+}

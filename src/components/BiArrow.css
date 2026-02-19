@@ -1,0 +1,43 @@
+/* ── Bidirectional arrow columns ── */
+.bi-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 90px;
+  gap: 6px;
+  height: 100%;
+}
+
+.ba-line-down { 
+  width: 2px; 
+  height: 50px; 
+}
+
+.ba-arrowhead-down {
+  width: 0; 
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+
+.ba-arrowhead-up {
+  width: 0; 
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+
+.ba-label {
+  font-size: 8px; 
+  font-family: 'IBM Plex Mono', monospace; 
+  font-weight: 700;
+  writing-mode: vertical-rl; 
+  transform: rotate(180deg);
+  letter-spacing: 0.4px; 
+  margin: 2px 0;
+}
+
+.ba-gap { 
+  height: 16px; 
+}

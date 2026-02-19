@@ -1,0 +1,43 @@
+/* ── Teams card ── */
+.teams-card {
+  background: #5B21B6;
+  color: #fff;
+  border-radius: 10px;
+  padding: 16px 12px;
+  text-align: center;
+  border: 2px solid #3B0764;
+  width: 148px;
+}
+
+.teams-icon { 
+  font-size: 26px; 
+  margin-bottom: 6px; 
+}
+
+.teams-title { 
+  font-size: 13px; 
+  font-weight: 700; 
+}
+
+.teams-sub { 
+  font-size: 10px; 
+  opacity: 0.8; 
+  margin-top: 4px; 
+  line-height: 1.5; 
+}
+
+.teams-roles { 
+  margin-top: 10px; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 4px; 
+}
+
+.teams-role {
+  background: rgba(255,255,255,0.15);
+  border-radius: 4px; 
+  padding: 3px 6px;
+  font-size: 9.5px; 
+  font-family: 'IBM Plex Mono', monospace; 
+  font-weight: 600;
+}
