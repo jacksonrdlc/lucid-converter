@@ -20,7 +20,7 @@ function Legend() {
         </div>
       ))}
       <div style={{ marginLeft: 'auto', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: '#9CA3AF' }}>
-        Slalom · Cigna / MDLive Discovery · 2025
+        Slalom · MDLive Discovery · 2025
       </div>
     </div>
   );
