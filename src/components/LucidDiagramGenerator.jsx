@@ -70,19 +70,19 @@ function LucidDiagramGenerator() {
         {diagramData ? (
           <div style={{ fontSize: '12px', fontFamily: 'monospace', overflow: 'auto', maxHeight: '400px' }}>
             <div style={{ marginBottom: '12px' }}>
-              <strong>Objects ({diagramData.objects.length}):</strong>
-              {diagramData.objects.map((obj, idx) => (
+              <strong>Shapes ({diagramData.shapes.length}):</strong>
+              {diagramData.shapes.map((s, idx) => (
                 <div key={idx} style={{ paddingLeft: '12px', marginTop: '4px', color: '#666' }}>
-                  • {obj.id} — {obj.type} @ ({obj.x}, {obj.y})
+                  • {s.id} — {s.type} @ ({s.boundingBox.x}, {s.boundingBox.y})
                 </div>
               ))}
             </div>
 
             <div>
-              <strong>Connections ({diagramData.connections.length}):</strong>
-              {diagramData.connections.map((conn, idx) => (
+              <strong>Lines ({diagramData.lines.length}):</strong>
+              {diagramData.lines.map((l, idx) => (
                 <div key={idx} style={{ paddingLeft: '12px', marginTop: '4px', color: '#666' }}>
-                  • {conn.from} → {conn.to} {conn.label && `[${conn.label}]`}
+                  • {l.endpoint1.shapeId} → {l.endpoint2.shapeId} {l.text?.[0]?.text && `[${l.text[0].text}]`}
                 </div>
               ))}
             </div>

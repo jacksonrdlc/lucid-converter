@@ -9,7 +9,7 @@ import LucidAPIIntegration from './components/LucidAPIIntegration';
 
 function App() {
   const [showLucidExport, setShowLucidExport] = useState(false);
-  const [showLucidAPI, setShowLucidAPI] = useState(false);
+  const [showEvaluate, setShowEvaluate] = useState(false);
   return (
     <>
       <div className="pg-header">
@@ -35,7 +35,7 @@ function App() {
               {showLucidExport ? 'Hide' : 'Export to Lucid'}
             </button>
             <button
-              onClick={() => setShowLucidAPI(!showLucidAPI)}
+              onClick={() => setShowEvaluate(!showEvaluate)}
               style={{
                 padding: '6px 12px',
                 background: '#8B5CF6',
@@ -47,7 +47,7 @@ function App() {
                 fontWeight: '600',
               }}
             >
-              {showLucidAPI ? 'Hide' : 'Lucid API'}
+              {showEvaluate ? 'Hide' : 'Evaluate Diagram'}
             </button>
           </div>
           <div style={{ fontSize: '11px', color: '#6B7280', marginTop: 'auto' }}>Phase 1 Pilot &nbsp;·&nbsp; Slalom / MDLive<br/>
@@ -90,8 +90,8 @@ function App() {
       {/* Lucid Diagram Export Section */}
       {showLucidExport && <LucidDiagramGenerator />}
 
-      {/* Lucid API Integration Section */}
-      {showLucidAPI && <LucidAPIIntegration />}
+      {/* Diagram Evaluation Section */}
+      {showEvaluate && <LucidAPIIntegration />}
     </>
   );
 }

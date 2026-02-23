@@ -116,25 +116,30 @@ class LucidChartAPI {
   async importDiagramJSON(diagramData, title = 'Architecture Diagram', folderId = null) {
     try {
       // Get the shapes and connections from diagram data
-      const objects = diagramData.objects || [];
-      const connections = diagramData.connections || [];
-      
-      console.log('📊 Diagram data:', { objectCount: objects.length, connectionCount: connections.length });
-      console.log('📋 Objects:', objects.slice(0, 2)); // Show first 2 objects
-      
-      // Create the Lucid standard format JSON with flat structure
+      const shapes = diagramData.shapes || [];
+      const lines = diagramData.lines || [];
+
+      console.log('📊 Diagram data:', { shapeCount: shapes.length, lineCount: lines.length });
+      console.log('📋 Shapes:', shapes.slice(0, 2)); // Show first 2 shapes
+
+      // Create the Lucid Standard Import format with pages array
       const lucidJSON = {
         version: 1,
-        id: 'page1',
-        name: title,
-        children: [...objects, ...connections]
+        pages: [
+          {
+            id: 'page1',
+            title: title,
+            shapes: shapes,
+            lines: lines,
+          }
+        ]
       };
-      
-      console.log('📦 Built Lucid JSON:', { 
+
+      console.log('📦 Built Lucid JSON:', {
         version: lucidJSON.version,
-        id: lucidJSON.id,
-        name: lucidJSON.name,
-        childCount: lucidJSON.children.length
+        pageCount: lucidJSON.pages.length,
+        shapeCount: shapes.length,
+        lineCount: lines.length
       });
       
       console.log('📦 Building .lucid ZIP file...');
